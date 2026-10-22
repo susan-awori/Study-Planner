@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AZ-900 Study Planner (unofficial)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+:root{--bg:#EAF1EE;--surface:#fff;--ink:#10302D;--muted:#4A6663;--line:#C9D8D3;--brand:#0B6E66;--accent:#E8A317;--learn:#0B6E66;--rev:#B4551E;--prac:#4A3FA8;--onbrand:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C1F1D;--surface:#12302D;--ink:#E6F1EE;--muted:#9DB8B3;--line:#24433F;--brand:#4CC3B6;--accent:#F2B63A;--learn:#4CC3B6;--rev:#F0955F;--prac:#A59BFF;--onbrand:#0C1F1D;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0C1F1D;--surface:#12302D;--ink:#E6F1EE;--muted:#9DB8B3;--line:#24433F;--brand:#4CC3B6;--accent:#F2B63A;--learn:#4CC3B6;--rev:#F0955F;--prac:#A59BFF;--onbrand:#0C1F1D;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Atkinson Hyperlegible",system-ui,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;line-height:1.15;margin:0}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 48px}
+header p{margin:6px 0 0;color:var(--muted);max-width:60ch}
+h1{font-size:clamp(1.8rem,5vw,2.8rem);font-weight:800}
+.badge{display:inline-block;margin-top:10px;padding:3px 10px;border:1px solid var(--line);border-radius:99px;font-size:.8rem;color:var(--muted)}
+.grid{display:grid;grid-template-columns:340px 1fr;gap:24px;margin-top:24px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.panel h2{font-size:1.2rem;margin-bottom:12px}
+label{display:block;font-weight:700;font-size:.9rem;margin:12px 0 4px}
+input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dom{margin:16px 0 4px;font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:.95rem;color:var(--brand)}
+.trow{display:grid;grid-template-columns:1fr 110px;gap:8px;align-items:center;margin:6px 0}
+.trow span{font-size:.88rem;line-height:1.3}
+.trow select{padding:5px 6px;font-size:.85rem}
+button{font:inherit;cursor:pointer;border-radius:10px;padding:11px 16px;font-weight:700;border:1px solid var(--brand);background:var(--brand);color:var(--onbrand);width:100%;margin-top:18px}
+button.ghost{background:transparent;color:var(--brand);width:auto;margin:0;padding:7px 12px;font-size:.85rem}
+.msg{margin-top:12px;padding:10px 12px;border-radius:8px;background:color-mix(in srgb,var(--accent) 22%,transparent);font-size:.9rem}
+.empty{padding:40px 20px;text-align:center;color:var(--muted)}
+.sum{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;justify-content:space-between}
+.sum h2{font-size:1.35rem;margin:0}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:12px 0 4px}
+.bar i{display:block;height:100%;background:var(--brand);width:0;transition:width .3s}
+.strip{display:flex;flex-wrap:wrap;gap:4px;margin:14px 0 4px}
+.strip a{width:22px;height:22px;border-radius:5px;background:var(--brand);border:2px solid transparent}
+.strip a.rest{background:var(--line);opacity:1}
+.strip a.today{border-color:var(--accent)}
+.legend{font-size:.8rem;color:var(--muted)}
+.week{margin:22px 0 8px;font-family:"Bricolage Grotesque",sans-serif;font-weight:700;color:var(--muted)}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0}
+.day.today{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.day.exam{border-color:var(--brand);border-width:2px}
+.dh{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.dh h3{font-size:1.05rem}
+.dh small{color:var(--muted)}
+.task{display:flex;gap:10px;margin-top:10px;align-items:flex-start}
+.task input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:var(--brand)}
+.task.done .tt{text-decoration:line-through;opacity:.55}
+.tt b{font-weight:700}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;padding:1px 8px;border-radius:99px;margin-right:6px;border:1px solid currentColor}
+.tag.learn{color:var(--learn)}.tag.rev{color:var(--rev)}.tag.prac{color:var(--prac)}
+.kw{display:block;color:var(--muted);font-size:.86rem}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+footer{margin-top:32px;color:var(--muted);font-size:.85rem}
+footer a{color:var(--brand)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{.panel.form,.row,.strip{display:none}.grid{display:block}body{background:#fff;color:#000}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>AZ-900 Study Planner</h1>
+<p>Enter your exam date, the hours you can study, and how confident you feel on each topic. You get a day-by-day plan that gives more time to your weak areas.</p>
+<span class="badge">Unofficial study aid. Not affiliated with or endorsed by Microsoft.</span>
+</header>
+<div class="grid">
+<form class="panel form" id="f" onsubmit="return false">
+<h2>Your details</h2>
+<label for="date">Exam date</label>
+<input type="date" id="date" required>
+<label for="hrs">Study hours per day</label>
+<select id="hrs"></select>
+<label for="rest">Rest day each week</label>
+<select id="rest"><option value="-1">None</option><option value="0">Sunday</option><option value="6">Saturday</option><option value="5">Friday</option></select>
+<h2 style="margin-top:20px">How confident are you?</h2>
+<div id="topics"></div>
+<button id="go" type="button">Build my plan</button>
+<div id="err" class="msg" hidden></div>
+</form>
+<main id="out" aria-live="polite"><div class="panel empty">Your plan will appear here. Pick an exam date and tap <b>Build my plan</b>.</div></main>
+</div>
+<footer>Topics follow the public AZ-900 skills outline on <a href="https://learn.microsoft.com/en-us/credentials/certifications/azure-fundamentals/" target="_blank" rel="noopener">Microsoft Learn</a>. Check it for the latest topic weightings. This tool contains no real exam questions.</footer>
+</div>
+<script>
+var TOPICS=[
+{id:1,d:0,n:"Cloud benefits and service models",m:90,k:"Public, private and hybrid cloud, CapEx vs OpEx, consumption-based pricing, high availability, scalability, elasticity, reliability"},
+{id:2,d:0,n:"Shared responsibility, IaaS, PaaS, SaaS",m:75,k:"Who manages what in each model, serverless, when to pick each model"},
+{id:3,d:1,n:"Regions, availability zones, resource hierarchy",m:90,k:"Region pairs, availability zones, resource groups, subscriptions, management groups"},
+{id:4,d:1,n:"Compute and containers",m:90,k:"Virtual machines, scale sets, availability sets, App Service, Container Instances, AKS, Functions, Azure Virtual Desktop"},
+{id:5,d:1,n:"Networking",m:90,k:"Virtual networks, subnets, peering, VPN Gateway, ExpressRoute, DNS, public and private endpoints"},
+{id:6,d:1,n:"Storage",m:90,k:"Blob, Files, Queue, Table, access tiers, LRS, ZRS, GRS, GZRS, migration tools such as AzCopy and Data Box"},
+{id:7,d:1,n:"Identity, access and security",m:120,k:"Microsoft Entra ID, MFA, passwordless, Conditional Access, RBAC, Zero Trust, defense in depth, Defender for Cloud"},
+{id:8,d:2,n:"Cost management",m:75,k:"Factors that affect cost, Pricing calculator, TCO calculator, Cost Management, tags"},
+{id:9,d:2,n:"Governance and compliance",m:75,k:"Azure Policy, resource locks, Microsoft Purview, Service Trust Portal"},
+{id:10,d:2,n:"Management and deployment tools",m:90,k:"Azure portal, Cloud Shell, CLI, PowerShell, ARM templates, Azure Arc, infrastructure as code"},
+{id:11,d:2,n:"Monitoring and service health",m:60,k:"Azure Advisor, Service Health, Azure Monitor, Log Analytics, alerts, Application Insights"}];
+var DOMS=["Cloud concepts","Azure architecture and services","Azure management and governance"];
+var CONF=["1 Not started","2 Shaky","3 Okay","4 Good","5 Strong"];
+var $=function(s){return document.querySelector(s)};
+var state=null;
+function load(){try{return JSON.parse(localStorage.getItem("az900plan")||"null")}catch(e){return null}}
+function save(){try{localStorage.setItem("az900plan",JSON.stringify(state))}catch(e){}}
+function fmt(m){return m>=60?Math.floor(m/60)+"h"+(m%60?" "+m%60+"m":""):m+" min"}
+function iso(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function parse(s){var p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2])}
+function init(){
+var h="";for(var i=1;i<=6;i+=0.5)h+='<option value="'+i+'"'+(i==2?" selected":"")+">"+i+" hour"+(i==1?"":"s")+"</option>";
+$("#hrs").innerHTML=h;
+var t="",last=-1;
+TOPICS.forEach(function(x){if(x.d!==last){t+='<div class="dom">'+DOMS[x.d]+"</div>";last=x.d}
+t+='<div class="trow"><span id="l'+x.id+'">'+x.n+'</span><select aria-labelledby="l'+x.id+'" data-t="'+x.id+'">'+CONF.map(function(c,i){return'<option value="'+(i+1)+'"'+(i==2?" selected":"")+">"+c+"</option>"}).join("")+"</select></div>"});
+$("#topics").innerHTML=t;
+var tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+14);$("#date").value=iso(tomorrow);$("#date").min=iso(new Date());
+var s=load();
+if(s){state=s;$("#date").value=s.date;$("#hrs").value=s.hrs;$("#rest").value=s.rest;
+document.querySelectorAll("[data-t]").forEach(function(e){e.value=s.conf[e.dataset.t]||3});render()}
+$("#go").onclick=build}
+function build(){
+var err=$("#err");err.hidden=true;
+var exam=parse($("#date").value),today=new Date();today=new Date(today.getFullYear(),today.getMonth(),today.getDate());
+if(!$("#date").value||exam<=today){err.textContent="Pick an exam date after today.";err.hidden=false;return}
+var hrs=+$("#hrs").value,rest=+$("#rest").value,conf={};
+document.querySelectorAll("[data-t]").forEach(function(e){conf[e.dataset.t]=+e.value});
+var days=[];for(var d=new Date(today);d<exam;d.setDate(d.getDate()+1)){days.push({date:iso(d),off:d.getDay()===rest,tasks:[],used:0})}
+var work=days.filter(function(x){return !x.off});
+if(!work.length){err.textContent="No study days left before your exam. Choose \u201cNone\u201d for rest day or move the date.";err.hidden=false;return}
+var fin=work.length>1?work[work.length-1]:null,pool=fin?work.slice(0,-1):work,cap=hrs*60;
+var C=pool.length*cap,W=0,V=0,tasks=[];
+TOPICS.forEach(function(x){x.w=x.m*(1+0.5*(5-conf[x.id]));W+=x.w;x.v=conf[x.id]<=3?6-conf[x.id]:0;V+=x.v});
+var lShare=V?0.6:0.85,rShare=V?0.25:0,pShare=0.15;
+function r5(n){return Math.max(15,Math.round(n/5)*5)}
+TOPICS.forEach(function(x){tasks.push({k:"learn",t:x.n,m:r5(C*lShare*x.w/W),kw:x.k})});
+TOPICS.filter(function(x){return x.v}).sort(function(a,b){return b.v-a.v}).forEach(function(x){tasks.push({k:"rev",t:"Revise: "+x.n,m:r5(C*rShare*x.v/V),kw:"Re-read your notes, redo the Microsoft Learn module, then explain it aloud in your own words"})});
+var weak=TOPICS.slice().sort(function(a,b){return conf[a.id]-conf[b.id]}).slice(0,3).map(function(x){return x.n});
+var np=Math.max(1,Math.round(C*pShare/60));
+for(var i=0;i<np;i++)tasks.push({k:"prac",t:"Practice assessment "+(i+1),m:r5(C*pShare/np),kw:"Use the free practice assessment on Microsoft Learn or your own written questions. Review every wrong answer. Weakest areas: "+weak.join(", ")});
+var di=0;
+tasks.forEach(function(t){var left=t.m;while(left>0){
+while(di<pool.length-1&&pool[di].used>=cap)di++;
+var space=Math.max(cap-pool[di].used,0)||left;
+var c=Math.min(left,space,90);if(left-c>0&&left-c<15)c=left;
+pool[di].tasks.push({k:t.k,t:t.t,m:c,kw:t.kw,done:false});pool[di].used+=c;left-=c}});
+if(fin)fin.tasks.push({k:"rev",t:"Light review and rest",m:Math.min(cap,90),kw:"Skim your notes and weak topics only. No new material. Check exam time, ID and system test, then sleep well",done:false});
+days.push({date:iso(exam),off:false,exam:true,tasks:[{k:"prac",t:"Exam day",m:0,kw:"Log in early, read each question slowly, flag hard ones and return to them. You have prepared for this",done:false}],used:0});
+var msg=null,need=TOPICS.reduce(function(a,x){return a+x.m},0)*0.6;
+state={date:$("#date").value,hrs:hrs,rest:rest,conf:conf,days:days,warn:C<need?"Your time is tight. The plan covers every topic but keeps sessions short, so try adding hours per day or moving the exam date if you can.":""};
+save();render();var o=$("#out");if(o.scrollIntoView&&window.innerWidth<860)o.scrollIntoView({behavior:"smooth"})}
+function stats(){var tot=0,done=0;state.days.forEach(function(d){d.tasks.forEach(function(t){if(!t.m)return;tot+=t.m;if(t.done)done+=t.m})});return{tot:tot,done:done}}
+function render(){
+var s=state,st=stats(),todayIso=iso(new Date()),h="";
+var left=Math.max(0,Math.round((parse(s.date)-parse(todayIso))/864e5));
+h+='<div class="panel"><div class="sum"><h2>'+left+" day"+(left==1?"":"s")+' to your exam</h2><div class="row"><button class="ghost" id="cp" type="button">Copy as text</button><button class="ghost" id="pr" type="button">Print</button></div></div>';
+h+='<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+(st.tot?Math.round(100*st.done/st.tot):0)+'"><i style="width:'+(st.tot?100*st.done/st.tot:0)+'%"></i></div>';
+h+='<div class="legend">'+fmt(st.done)+" of "+fmt(st.tot)+" studied. Darker squares are heavier days, grey squares are rest days.</div>";
+var mx=Math.max.apply(null,s.days.map(function(d){return d.used||1}));
+h+='<div class="strip">'+s.days.map(function(d,i){var o=d.off?1:(d.exam?1:0.3+0.7*Math.min(1,(d.tasks.reduce(function(a,t){return a+t.m},0))/mx));
+return'<a href="#d'+i+'" class="'+(d.off?"rest ":"")+(d.date===todayIso?"today":"")+'" style="'+(d.off?"":"opacity:"+o)+'" title="'+d.date+'"></a>'}).join("")+"</div>";
+if(s.warn)h+='<div class="msg">'+s.warn+"</div>";
+h+="</div>";
+var lastWeek=-1;
+s.days.forEach(function(d,i){var dt=parse(d.date),wk=Math.floor(i/7);
+if(wk!==lastWeek){h+='<div class="week">Week '+(wk+1)+"</div>";lastWeek=wk}
+var tm=d.tasks.reduce(function(a,t){return a+t.m},0);
+h+='<section class="day'+(d.date===todayIso?" today":"")+(d.exam?" exam":"")+'" id="d'+i+'"><div class="dh"><h3>'+dt.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"short"})+(d.exam?" \u2013 exam day":"")+"</h3><small>"+(d.off?"Rest day":(tm?fmt(tm):""))+"</small></div>";
+if(d.off)h+='<div class="kw" style="margin-top:6px">Rest helps memory. Take the day off.</div>';
+d.tasks.forEach(function(t,j){h+='<label class="task'+(t.done?" done":"")+'" style="font-weight:400;margin:10px 0 0"><input type="checkbox" data-i="'+i+'" data-j="'+j+'"'+(t.done?" checked":"")+'><span class="tt"><span class="tag '+t.k+'">'+({learn:"Learn",rev:"Revise",prac:d.exam?"Go":"Practice"})[t.k]+"</span><b>"+t.t+"</b>"+(t.m?" \u2013 "+fmt(t.m):"")+'<span class="kw">'+t.kw+"</span></span></label>"});
+h+="</section>"});
+$("#out").innerHTML=h;
+document.querySelectorAll("#out input[type=checkbox]").forEach(function(c){c.onchange=function(){var t=state.days[c.dataset.i].tasks[c.dataset.j];t.done=c.checked;save();var y=window.scrollY;render();window.scrollTo(0,y)}});
+$("#pr").onclick=function(){window.print()};
+$("#cp").onclick=function(){var tx="AZ-900 study plan (exam "+s.date+")\n\n"+s.days.map(function(d){return d.date+(d.off?": rest day":(d.exam?": EXAM DAY":":\n"+d.tasks.map(function(t){return"  - "+t.t+" ("+fmt(t.m)+")"}).join("\n")))}).join("\n");
+var b=$("#cp");function ok(){b.textContent="Copied"}function no(){b.textContent="Copy blocked. Use Print"}
+try{navigator.clipboard.writeText(tx).then(ok,no)}catch(e){no()}}}
+init();
+</script>
+</body>
+</html>

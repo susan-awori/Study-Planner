@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AZ-900 Study Planner (unofficial)</title>
+<title>AZ-900 Prep Companion (unofficial)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
 <style>
@@ -62,15 +62,40 @@ footer{margin-top:32px;color:var(--muted);font-size:.85rem}
 footer a{color:var(--brand)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 @media print{.panel.form,.row,.strip{display:none}.grid{display:block}body{background:#fff;color:#000}}
+
+.tabs{display:flex;gap:6px;overflow-x:auto;margin-top:20px;padding-bottom:0;border-bottom:1px solid var(--line)}
+.tab{width:auto;margin:0;background:transparent;color:var(--ink);border:1px solid transparent;border-bottom:0;border-radius:10px 10px 0 0;padding:9px 14px;white-space:nowrap;font-weight:700}
+.tab[aria-selected=true]{background:var(--surface);border-color:var(--line);color:var(--brand);position:relative;top:1px}
+.pane{margin-top:20px}.pane[hidden]{display:none}
+.btn{width:auto;margin:0}.btn.sec{background:transparent;color:var(--brand)}
+.muted{color:var(--muted)}
+textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;resize:vertical}
+.opt{display:block;width:100%;text-align:left;background:var(--surface);color:var(--ink);border:2px solid var(--line);margin:8px 0 0;font-weight:400}
+.opt:hover:not(:disabled){border-color:var(--brand)}
+.opt:disabled{cursor:default;color:var(--ink);opacity:1}
+.opt.ok{border-color:var(--learn);background:color-mix(in srgb,var(--learn) 14%,var(--surface))}
+.opt.bad{border-color:var(--rev);background:color-mix(in srgb,var(--rev) 14%,var(--surface))}
+.fc{min-height:190px;display:flex;align-items:center;justify-content:center;text-align:center;font:700 1.25rem/1.4 "Bricolage Grotesque",sans-serif;padding:28px;margin-top:14px;border:2px dashed var(--line);border-radius:14px;cursor:pointer;background:var(--bg)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:14px 0}
+.stat{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px;color:var(--muted);font-size:.85rem}
+.stat b{display:block;font:800 1.7rem "Bricolage Grotesque",sans-serif;color:var(--ink)}
+.gauge{display:flex;gap:18px;align-items:center;flex-wrap:wrap}.gauge svg{width:220px;max-width:100%}
+.trow2{display:flex;gap:12px;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--line)}.trow2>div{flex:1}
+.tbar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:6px 0 2px}.tbar i{display:block;height:100%;background:var(--brand)}
+.hdr{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+@media print{.tabs,.hdr{display:none}.pane[hidden]{display:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
-<h1>AZ-900 Study Planner</h1>
-<p>Enter your exam date, the hours you can study, and how confident you feel on each topic. You get a day-by-day plan that gives more time to your weak areas.</p>
+<h1>AZ-900 Prep Companion</h1>
+<p>Plan your study days, practise with explained quizzes, revise with flashcards that bring back what you miss, track your readiness, and ask an AI study buddy for simple explanations with everyday African examples.</p>
 <span class="badge">Unofficial study aid. Not affiliated with or endorsed by Microsoft.</span>
+<div class="hdr"><button class="btn sec ghost" id="demo" type="button">Load demo data</button><button class="btn sec ghost" id="reset" type="button">Reset my data</button></div>
+<div class="tabs" role="tablist" aria-label="Sections"><button class="tab" id="t-plan" role="tab" type="button">Plan</button><button class="tab" id="t-quiz" role="tab" type="button">Quiz</button><button class="tab" id="t-cards" role="tab" type="button">Flashcards</button><button class="tab" id="t-ready" role="tab" type="button">Readiness</button><button class="tab" id="t-buddy" role="tab" type="button">AI Buddy</button></div>
 </header>
+<section class="pane" id="p-plan" style="margin-top:0">
 <div class="grid">
 <form class="panel form" id="f" onsubmit="return false">
 <h2>Your details</h2>
@@ -83,10 +108,16 @@ footer a{color:var(--brand)}
 <h2 style="margin-top:20px">How confident are you?</h2>
 <div id="topics"></div>
 <button id="go" type="button">Build my plan</button>
+<button id="useq" class="sec" type="button" style="background:transparent;color:var(--brand)">Use my quiz results for confidence</button>
 <div id="err" class="msg" hidden></div>
 </form>
 <main id="out" aria-live="polite"><div class="panel empty">Your plan will appear here. Pick an exam date and tap <b>Build my plan</b>.</div></main>
 </div>
+</section>
+<section class="pane" id="p-quiz" hidden><div id="quiz"></div></section>
+<section class="pane" id="p-cards" hidden><div id="cards"></div></section>
+<section class="pane" id="p-ready" hidden><div id="ready"></div></section>
+<section class="pane" id="p-buddy" hidden><div id="buddy"></div></section>
 <footer>Topics follow the public AZ-900 skills outline on <a href="https://learn.microsoft.com/en-us/credentials/certifications/azure-fundamentals/" target="_blank" rel="noopener">Microsoft Learn</a>. Check it for the latest topic weightings. This tool contains no real exam questions.</footer>
 </div>
 <script>
@@ -180,6 +211,258 @@ $("#cp").onclick=function(){var tx="AZ-900 study plan (exam "+s.date+")\n\n"+s.d
 var b=$("#cp");function ok(){b.textContent="Copied"}function no(){b.textContent="Copy blocked. Use Print"}
 try{navigator.clipboard.writeText(tx).then(ok,no)}catch(e){no()}}}
 init();
+</script>
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const TN=id=>TOPICS.find(t=>t.id===id).n;
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const store=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
+const put=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+/* Approximate midpoints of the published AZ-900 domain ranges (25-30, 35-40, 30-35). Check Microsoft Learn for current values. */
+const DW=[0.275,0.375,0.325];
+
+/* ---------- Question bank (original questions; correct answer is always option 0 and is shuffled when shown) ---------- */
+const QB=[
+[1,"A start-up does not want to buy servers up front. It wants to pay only for the resources it actually uses each month. Which cloud pricing model fits?",["Consumption-based (pay as you go)","Fixed annual hardware purchase","Perpetual licence","Colocation lease with a minimum term"],"Consumption-based pricing means no upfront hardware cost and you pay for usage. It is an operating expense (OpEx). A hardware purchase or licence is a capital expense paid up front."],
+[1,"An online shop's traffic jumps tenfold on a sale day. The platform automatically adds capacity, then removes it when traffic falls. Which cloud benefit is this?",["Elasticity","High availability","Disaster recovery","Geo-distribution"],"Elasticity is adding and removing resources automatically as demand changes. High availability is about staying online with minimal downtime, not about matching capacity to load."],
+[1,"A bank must keep customer records in its own data centre but wants to run new apps in Azure, connected to that data centre. Which cloud model is this?",["Hybrid cloud","Public cloud only","Private cloud only","Multi-tenant SaaS"],"Hybrid cloud combines on-premises or private infrastructure with a public cloud. Public-only would mean nothing stays on-premises."],
+[1,"Which of these is an example of capital expenditure (CapEx)?",["Buying physical servers for your own data centre","Paying monthly for Azure virtual machines","Paying per transaction for a SaaS tool","Paying for storage by the gigabyte used"],"CapEx is up-front spending on physical assets. The other options are pay-as-you-go operating expenses (OpEx)."],
+[1,"Which statement best describes high availability?",["The service stays accessible with minimal downtime, often backed by an SLA","The service can only be reached from one region","The service always uses the cheapest hardware","The service needs no maintenance"],"High availability means keeping workloads running with minimal interruption. Service level agreements (SLAs) express this as a percentage of uptime."],
+[2,"In an IaaS virtual machine, who is responsible for installing operating system updates?",["The customer","Microsoft","The internet service provider","Nobody, it is automatic"],"With IaaS the provider manages the physical infrastructure, but you manage the operating system and everything above it, including patching."],
+[2,"Which of these is an example of Software as a Service (SaaS)?",["Microsoft 365","Azure Virtual Machines","A virtual network","Azure Kubernetes Service nodes you configure yourself"],"SaaS is complete software you simply use. Virtual machines are IaaS, and you manage far more yourself."],
+[2,"Whichever cloud model you choose, what do you always remain responsible for?",["Your data and who can access it","Physical security of the data centre","Power and cooling","The hypervisor"],"In the shared responsibility model, data, identities and access always stay with the customer. Physical datacentre security, power and cooling are always the provider's."],
+[2,"A developer wants to deploy a web app without managing servers or operating systems. Which model fits best?",["Platform as a Service (PaaS)","Infrastructure as a Service (IaaS)","On-premises hosting","A private data centre"],"PaaS gives you a managed platform so you focus on code and data. In IaaS you still run the operating system."],
+[2,"Which is a characteristic of serverless computing?",["Code runs on demand and you do not manage the servers","You must patch the operating system","You pay for idle virtual machines","It only works on-premises"],"Serverless platforms such as Azure Functions run your code in response to events and bill for execution. The provider manages the servers."],
+[3,"What is an availability zone?",["A physically separate location within a region with independent power, cooling and networking","A group of subscriptions","A tag used for billing","A type of virtual network"],"Availability zones protect against datacentre-level failures because each zone has its own power, cooling and networking within the same region."],
+[3,"Which list orders the Azure hierarchy from largest scope to smallest?",["Management group, subscription, resource group, resource","Resource, resource group, subscription, management group","Subscription, management group, resource, resource group","Resource group, management group, subscription, resource"],"Management groups hold subscriptions, subscriptions hold resource groups, and resource groups hold resources."],
+[3,"What is the main purpose of Azure region pairs?",["Disaster recovery between two regions in the same geography","Making resources cheaper","Combining two subscriptions","Encrypting data at rest"],"Each region is paired with another in the same geography to help with recovery. Platform updates also roll out to one region of a pair at a time."],
+[3,"Which statement about resource groups is true?",["A resource group can contain resources from different regions","A resource can belong to several resource groups at once","Deleting a resource group leaves its resources untouched","A resource group can only contain one resource type"],"A resource belongs to exactly one resource group, but the group can hold different types in different regions. Deleting the group deletes everything inside."],
+[3,"Why would an organisation use management groups?",["To apply access and policy across several subscriptions","To store files in the cloud","To monitor virtual machine CPU","To lower the price of storage"],"Management groups sit above subscriptions so you can apply governance, such as policies and access, to many subscriptions at once."],
+[4,"A company wants to move a legacy application and keep full control of the operating system. Which Azure service fits?",["Azure Virtual Machines","Azure Functions","Azure App Service","Azure Container Instances"],"Virtual machines give you complete control of the operating system, which suits lift-and-shift of legacy apps. The others abstract the operating system away."],
+[4,"Which service is a managed platform for hosting web apps and APIs without managing servers?",["Azure App Service","Azure Virtual Machines","Azure Virtual Network","Azure Data Box"],"App Service is a PaaS offering for web apps, APIs and mobile back ends. Virtual machines would require you to manage the operating system."],
+[4,"Which service lets you run a container quickly without managing virtual machines or orchestrators?",["Azure Container Instances","Azure Virtual Machines","Azure Arc","Azure Policy"],"Azure Container Instances starts containers on demand without server management. For orchestrating many containers you would use Azure Kubernetes Service."],
+[4,"A small piece of code should run only when a file is uploaded, and you want to pay per execution. Which service fits?",["Azure Functions","Azure Virtual Machines","Azure ExpressRoute","Azure Files"],"Azure Functions is event-driven and serverless, billed on execution. A virtual machine would cost money even when idle."],
+[4,"What do virtual machine scale sets do?",["Automatically add or remove identical virtual machines based on demand","Connect two virtual networks","Back up files to the Archive tier","Check policy compliance"],"Scale sets manage a group of identical virtual machines and can scale the number up or down with load."],
+[5,"What is an Azure virtual network?",["A private network in Azure where your resources can communicate securely","A physical cable between data centres","A type of storage account","A billing report"],"A virtual network is your isolated, private network in Azure. Resources inside it can talk to each other and to on-premises networks if connected."],
+[5,"A company wants a private, dedicated connection from its office to Azure that does not travel over the public internet. Which service fits?",["Azure ExpressRoute","Azure VPN Gateway","Virtual network peering","Azure DNS"],"ExpressRoute is a private connection through a connectivity provider. VPN Gateway uses an encrypted tunnel over the public internet."],
+[5,"Which service creates an encrypted tunnel over the public internet between on-premises and Azure?",["Azure VPN Gateway","Azure ExpressRoute","Azure Files","Azure Advisor"],"VPN Gateway sends encrypted traffic over the public internet. ExpressRoute avoids the public internet entirely."],
+[5,"What does virtual network peering allow?",["Two virtual networks to communicate using private IP addresses","A virtual network to join the internet","Sharing a subscription between two companies","Copying a VM to another region by default"],"Peering connects virtual networks so resources can communicate privately over the Microsoft backbone network."],
+[5,"What does a private endpoint provide?",["A private IP address in your virtual network for accessing an Azure service","A faster internet connection","A public web address for a VM","A discount on bandwidth"],"A private endpoint brings an Azure service, such as storage, into your virtual network through a private IP so traffic avoids the public internet."],
+[6,"Which Azure Storage service is designed for large amounts of unstructured data such as images and videos?",["Blob storage","Queue storage","Table storage","Azure Files"],"Blob storage stores unstructured objects. Queues hold messages, tables hold NoSQL key-value data, and Azure Files provides file shares."],
+[6,"Which storage option provides managed file shares that can be mounted using SMB?",["Azure Files","Blob storage","Queue storage","Table storage"],"Azure Files provides fully managed file shares accessible over the SMB protocol."],
+[6,"Which access tier has the lowest storage cost but takes hours to retrieve data?",["Archive","Hot","Cool","Premium"],"Archive suits rarely accessed data. It is cheapest to store but data must be rehydrated before use, which can take hours."],
+[6,"Which redundancy option copies your data to a secondary region?",["Geo-redundant storage (GRS)","Locally redundant storage (LRS)","Zone-redundant storage (ZRS)","The Hot access tier"],"GRS keeps copies in the primary region and replicates to a paired secondary region. LRS stays in one datacentre and ZRS spreads across zones in one region."],
+[6,"You need to move 100 TB of data to Azure, but your internet connection is slow. What is the best option?",["Azure Data Box","AzCopy over the internet","Azure DNS","Azure Policy"],"Data Box is a physical device for transferring large amounts of data offline. AzCopy would still depend on your network speed."],
+[7,"What is Microsoft Entra ID?",["A cloud-based identity and access management service","A virtual machine size","A storage redundancy option","A billing tool"],"Microsoft Entra ID manages identities and access, including sign-in, single sign-on and multifactor authentication."],
+[7,"Which is an example of multifactor authentication?",["A password plus a code from an authenticator app","Two different passwords","A password typed twice","A username and an email address"],"Multifactor authentication combines different kinds of factors: something you know, have or are. Two passwords are the same factor twice."],
+[7,"You want to give a user read-only access to a single resource group and nothing else. Which feature do you use?",["Azure role-based access control (RBAC)","Azure Advisor","Azure Pricing calculator","Resource tags"],"RBAC assigns roles at a chosen scope, which supports least-privilege access."],
+[7,"What is the core idea of the Zero Trust model?",["Never trust, always verify","Trust everything inside the network","Trust only managers","Block all internet access"],"Zero Trust assumes breach and verifies explicitly every request, regardless of where it comes from."],
+[7,"What does defense in depth mean?",["Using multiple layers of protection so one failure does not expose everything","Using one very strong firewall","Locking the data centre door only","Encrypting only passwords"],"Layers such as physical, identity, perimeter, network, compute, application and data work together so an attacker must get past several controls."],
+[8,"Which tool estimates the cost of Azure resources you plan to deploy?",["Pricing calculator","TCO calculator","Azure Advisor","Service Health"],"The Pricing calculator estimates the monthly cost of planned Azure resources. The TCO calculator compares on-premises with Azure."],
+[8,"Which tool compares the cost of running workloads on-premises with running them in Azure?",["Total Cost of Ownership (TCO) calculator","Pricing calculator","Azure Monitor","Resource locks"],"The TCO calculator models your current on-premises costs against an Azure alternative."],
+[8,"Which service lets you analyse spending, create budgets and set alerts?",["Microsoft Cost Management","Azure Policy","Microsoft Purview","Azure Arc"],"Cost Management helps you monitor and control Azure spending with analysis, budgets and alerts."],
+[8,"Why would you apply tags to resources?",["To organise resources and track costs by department or project","To make resources run faster","To encrypt resources","To move them to another region"],"Tags are name and value pairs. They help group resources and break down costs in reports."],
+[8,"Why might the same virtual machine cost different amounts in two Azure regions?",["Prices vary by region","Azure charges more on weekends","The VM runs slower in cheap regions","Tags change the price"],"Region is one of the factors that affects cost, along with resource type, usage and more."],
+[9,"Which service can enforce a rule that resources may only be created in approved regions?",["Azure Policy","Azure RBAC","Azure Advisor","Azure Monitor"],"Azure Policy creates and enforces rules on resource properties, such as allowed locations, and reports compliance."],
+[9,"How can you stop someone accidentally deleting an important resource?",["Apply a resource lock","Apply a tag","Create a budget","Use a bigger VM"],"A CanNotDelete lock prevents deletion, and a ReadOnly lock prevents changes. Locks apply even to users with high permissions."],
+[9,"Which service helps you discover, classify and govern data across on-premises, multicloud and SaaS?",["Microsoft Purview","Azure Advisor","Azure DNS","Azure Virtual Desktop"],"Microsoft Purview provides data governance and compliance across your whole data estate."],
+[9,"Where can you find Microsoft's audit reports and compliance documentation?",["Service Trust Portal","Azure Pricing calculator","Azure Cloud Shell","Virtual network peering"],"The Service Trust Portal publishes compliance reports, audit results and security documents."],
+[9,"Which statement correctly contrasts Azure Policy and RBAC?",["Policy governs resource properties, while RBAC governs what users can do","Policy gives users permissions, while RBAC checks resource properties","They do exactly the same thing","Policy only controls billing"],"RBAC answers who can do what. Policy answers what state resources are allowed to be in."],
+[10,"Which tool gives you a browser-based command line for Azure without installing anything locally?",["Azure Cloud Shell","Azure Data Box","Azure DNS","Azure Policy"],"Cloud Shell is accessed in the browser and supports Bash or PowerShell with Azure tools preinstalled."],
+[10,"Which feature lets you describe Azure resources in a declarative file and deploy them repeatably?",["Azure Resource Manager (ARM) templates","Azure Advisor","Service Health","Pricing calculator"],"ARM templates are declarative infrastructure as code. The same template produces the same resources every time."],
+[10,"Which service lets you manage servers outside Azure, such as on-premises or in another cloud, using Azure tools?",["Azure Arc","Azure Cloud Shell","Azure Advisor","Azure Files"],"Azure Arc extends Azure management and governance to resources running outside Azure."],
+[10,"Which tool gives you a graphical, point-and-click web interface for Azure?",["Azure portal","Azure CLI","ARM templates","Azure PowerShell"],"The Azure portal is the web UI. CLI and PowerShell are command-line tools, and ARM templates are files."],
+[10,"What is a key benefit of infrastructure as code?",["Consistent, repeatable deployments with fewer manual errors","No need for any resources","Free Azure usage","Automatic exam passing"],"Describing infrastructure in code lets you version it and deploy the same environment reliably."],
+[11,"Which service gives personalised recommendations on cost, security, reliability, performance and operational excellence?",["Azure Advisor","Azure Service Health","Azure Policy","Azure Arc"],"Azure Advisor analyses your resources and suggests improvements across five areas."],
+[11,"Which service alerts you to Azure outages and planned maintenance that affect your resources?",["Azure Service Health","Azure Advisor","Azure Cost Management","Azure Policy"],"Service Health gives personalised information about Azure service issues and planned maintenance."],
+[11,"Which service collects, analyses and acts on telemetry from your cloud and on-premises environments?",["Azure Monitor","Azure Data Box","Azure Policy","Azure DNS"],"Azure Monitor is the platform for collecting and analysing metrics and logs, and for raising alerts."],
+[11,"Which tool do you use to query log data with the Kusto Query Language (KQL)?",["Log Analytics","Azure Files","Azure Arc","Resource locks"],"Log Analytics is the tool in the Azure portal for writing and running KQL queries on log data."],
+[11,"Which service monitors the performance of a live web application and helps detect anomalies?",["Application Insights","Azure Advisor","Azure Data Box","Azure Blueprints"],"Application Insights is the application performance management feature of Azure Monitor."]
+];
+
+/* ---------- Base flashcards: [topic, front, back] ---------- */
+const BASE=[
+[1,"CapEx vs OpEx","CapEx: up-front spending on physical assets. OpEx: pay as you go for services, which is how cloud billing works."],
+[1,"Elasticity","Automatically adding or removing resources as demand changes."],
+[1,"High availability","Keeping a service running with minimal downtime, usually described by an SLA percentage."],
+[2,"Shared responsibility model","The provider secures the infrastructure. You are always responsible for your data, identities and access. The rest depends on IaaS, PaaS or SaaS."],
+[2,"IaaS vs PaaS vs SaaS","IaaS: you manage the OS and above. PaaS: you manage apps and data. SaaS: you just use the software."],
+[2,"Serverless","Code runs on demand, you manage no servers and you pay per execution (for example Azure Functions)."],
+[3,"Availability zone","A physically separate location in a region with its own power, cooling and networking."],
+[3,"Azure resource hierarchy","Management group, then subscription, then resource group, then resource."],
+[3,"Region pair","Two regions in the same geography used for disaster recovery. Updates roll out to one at a time."],
+[4,"Azure App Service","Managed platform for hosting web apps and APIs without managing servers."],
+[4,"Container Instances vs AKS","ACI: run containers quickly without managing servers. AKS: managed Kubernetes for orchestrating many containers."],
+[4,"Azure Functions","Event-driven, serverless code. You pay for execution."],
+[4,"VM scale sets","Automatically grow or shrink a group of identical virtual machines based on demand."],
+[5,"VPN Gateway vs ExpressRoute","VPN Gateway: encrypted tunnel over the public internet. ExpressRoute: private dedicated connection that avoids the public internet."],
+[5,"VNet peering","Connects two virtual networks so they communicate privately over the Microsoft backbone."],
+[5,"Private endpoint","A private IP in your virtual network that connects to an Azure service, keeping traffic off the public internet."],
+[6,"LRS, ZRS, GRS, GZRS","LRS: 3 copies in one datacentre. ZRS: across zones in a region. GRS: LRS plus a copy in a paired region. GZRS: ZRS plus a copy in a paired region."],
+[6,"Blob access tiers","Hot (frequent), Cool (infrequent), Cold (rare), Archive (very rare, hours to retrieve, cheapest to store)."],
+[6,"AzCopy vs Data Box","AzCopy: command-line copying over the network. Data Box: physical device for moving very large data offline."],
+[7,"Microsoft Entra ID","Cloud identity and access management service (formerly Azure Active Directory)."],
+[7,"Zero Trust","Never trust, always verify: assume breach, verify explicitly, use least-privilege access."],
+[7,"Defense in depth","Layered security so that a single failure does not expose everything."],
+[7,"Conditional Access","Policies that allow or block access based on signals such as user, location, device and risk."],
+[8,"Pricing calculator vs TCO calculator","Pricing: estimate the cost of Azure resources you plan to use. TCO: compare on-premises costs with Azure."],
+[8,"Tags","Name and value labels on resources used to organise them and track cost."],
+[8,"Microsoft Cost Management","Analyse spending, create budgets and set alerts."],
+[9,"Azure Policy","Creates and enforces rules on resources (for example allowed regions) and reports compliance."],
+[9,"Resource locks","CanNotDelete or ReadOnly locks stop accidental deletion or changes."],
+[9,"Microsoft Purview","Data governance: discover, classify and manage data across your estate."],
+[9,"Service Trust Portal","Where Microsoft publishes compliance and audit reports."],
+[10,"Azure Arc","Extends Azure management to servers and services outside Azure."],
+[10,"ARM templates","Declarative JSON files that deploy Azure resources repeatably (infrastructure as code)."],
+[10,"Cloud Shell","Browser-based Bash or PowerShell with Azure tools ready to use."],
+[11,"Azure Advisor","Personalised recommendations on cost, security, reliability, operational excellence and performance."],
+[11,"Azure Service Health","Personalised alerts about Azure incidents and planned maintenance."],
+[11,"Monitor vs Log Analytics vs Application Insights","Monitor: collect and analyse telemetry. Log Analytics: query logs with KQL. Application Insights: performance monitoring for web apps."]
+];
+
+/* ---------- Simple explanations with everyday African examples (English, Naija Pidgin, Kiswahili). Review with native speakers before the demo. ---------- */
+const EX={
+1:{en:"Cloud is like paying for electricity from the grid instead of buying a generator. You pay for what you use, and you can get more when you need it.",pcm:"Cloud na like NEPA light. You no need buy generator, you go just pay for wetin you use, and if you need more, dem go give you.",sw:"Cloud ni kama kulipia umeme wa gridi badala ya kununua jenereta. Unalipa kwa unachotumia tu, na unapata zaidi unapohitaji."},
+2:{en:"IaaS is renting an empty shop and fitting it out yourself. PaaS is renting a shop with shelves and power ready. SaaS is buying from a ready market stall: you just use it.",pcm:"IaaS na to rent empty shop and arrange everything yourself. PaaS na shop wey don ready with shelf and light. SaaS na to just buy from market stall wey don set.",sw:"IaaS ni kukodi duka tupu na kulipanga mwenyewe. PaaS ni duka lenye rafu na umeme tayari. SaaS ni kununua kwenye kibanda kilichokamilika."},
+3:{en:"A region is like a city. Availability zones are separate buildings in it, each with its own generator, so one power cut does not stop everything. Resource groups are folders that keep related things together.",pcm:"Region na like city. Availability zones na different buildings inside am, each get im own generator, so if one lose light, the rest still dey work. Resource group na folder wey dey hold related things together.",sw:"Region ni kama jiji. Availability zones ni majengo tofauti ndani yake, kila moja na jenereta yake, kwa hivyo umeme ukikatika kwenye moja, mengine yanaendelea. Resource group ni folda inayoweka vitu vinavyohusiana pamoja."},
+4:{en:"A virtual machine is renting a whole computer in someone else's office. App Service is renting a desk with everything set up. Functions is hiring someone only when a job comes in.",pcm:"Virtual machine na to rent full computer for another person office. App Service na to rent desk wey don ready. Functions na to hire person only when work show.",sw:"Virtual machine ni kukodi kompyuta nzima ofisini kwa mtu mwingine. App Service ni kukodi dawati lililo tayari. Functions ni kumwajiri mtu pale kazi inapotokea tu."},
+5:{en:"A virtual network is your private compound with a gate. Peering is a path joining two compounds. A VPN is a secure tunnel through the public road; ExpressRoute is your own private road.",pcm:"Virtual network na your own compound wey get gate. Peering na road wey join two compounds. VPN na secret tunnel wey pass public road, ExpressRoute na your own private road.",sw:"Virtual network ni uwanja wako wenye lango. Peering ni njia inayounganisha viwanja viwili. VPN ni handaki salama kupitia barabara ya umma, ExpressRoute ni barabara yako binafsi."},
+6:{en:"Blob storage is a big warehouse for any kind of goods. Files is a shared office cabinet everyone can open. The Archive tier is a cheap, faraway store room where getting things back takes time.",pcm:"Blob na big warehouse for any kain thing. Files na shared cabinet wey everybody for office fit open. Archive na cheap store room wey far, e go take time before you get your things.",sw:"Blob ni ghala kubwa la kila aina ya bidhaa. Files ni kabati la ofisi la pamoja. Archive ni stoo ya mbali ya bei nafuu ambapo kurudisha vitu huchukua muda."},
+7:{en:"Entra ID is the security guard checking your ID. MFA is the guard also asking for the code on your phone. RBAC is giving each staff member only the keys they need.",pcm:"Entra ID na the security man wey dey check your ID. MFA na when he still ask for code for your phone. RBAC na to give each worker only the keys wey he need.",sw:"Entra ID ni mlinzi anayekagua kitambulisho chako. MFA ni mlinzi huyo kuomba pia msimbo wa simu yako. RBAC ni kumpa kila mfanyakazi funguo anazohitaji tu."},
+8:{en:"The Pricing calculator is asking the market price before you buy. Cost Management is checking your receipts at month end. Tags are labels that sort each receipt by department.",pcm:"Pricing calculator na to ask price before you buy. Cost Management na to check your receipts for month end. Tags na label wey dey sort each receipt by department.",sw:"Pricing calculator ni kuuliza bei kabla ya kununua. Cost Management ni kukagua risiti zako mwisho wa mwezi. Tags ni lebo zinazopanga kila risiti kwa idara."},
+9:{en:"Azure Policy is the estate rules, for example no building without approval. A resource lock is a padlock so nobody deletes something by mistake. Purview is the record keeper that knows where your data sits.",pcm:"Azure Policy na the estate rules. Resource lock na padlock so nobody no go delete something by mistake. Purview na the record keeper wey know where your data dey.",sw:"Azure Policy ni kanuni za mtaa. Resource lock ni kufuli ili mtu asifute kitu kwa bahati mbaya. Purview ni mtunza kumbukumbu anayejua data yako iko wapi."},
+10:{en:"The Azure portal is using the shop's touch screen. CLI and PowerShell are typing commands. An ARM template is a written recipe, so you cook the same meal every time.",pcm:"Azure portal na to use touch screen. CLI and PowerShell na to type command. ARM template na recipe wey you write so you fit cook the same food every time.",sw:"Azure portal ni kutumia skrini ya kugusa. CLI na PowerShell ni kuandika amri. ARM template ni mapishi yaliyoandikwa ili upike chakula kilekile kila mara."},
+11:{en:"Azure Monitor is the CCTV and meter readings for your system. Advisor is a consultant suggesting improvements. Service Health is the notice that tells you about planned power outages.",pcm:"Azure Monitor na the CCTV and meter wey dey show how your system dey. Advisor na consultant wey dey advise you. Service Health na the notice wey tell you say light go go.",sw:"Azure Monitor ni kamera za CCTV na vipimo vya mfumo wako. Advisor ni mshauri anayependekeza maboresho. Service Health ni tangazo linalokuambia kuhusu kukatika kwa huduma kulikopangwa."}
+};
+const LANGS=[["en","English"],["pcm","Naija Pidgin"],["sw","Kiswahili"],["yo","Yorùbá (AI only)"],["ha","Hausa (AI only)"],["fr","Français (AI only)"]];
+
+/* ---------- Progress ---------- */
+let P=store("az900prog",{t:{},days:[]});
+const sP=()=>put("az900prog",P);
+const ts=id=>P.t[id]||{a:0,c:0};
+const score=id=>{const s=ts(id);return s.c/Math.max(s.a,3)};
+const total=()=>TOPICS.reduce((a,t)=>a+ts(t.id).a,0);
+function readiness(){const cnt=[0,0,0];TOPICS.forEach(t=>cnt[t.d]++);let r=0,w=0;TOPICS.forEach(t=>{const wt=DW[t.d]/cnt[t.d];r+=wt*score(t.id);w+=wt});return Math.round(100*r/w)}
+function streak(){let n=0,d=new Date();if(P.days.indexOf(iso(d))<0)d.setDate(d.getDate()-1);while(P.days.indexOf(iso(d))>=0){n++;d.setDate(d.getDate()-1)}return n}
+function mark(id,ok){const s=P.t[id]=P.t[id]||{a:0,c:0};s.a++;if(ok)s.c++;const d=iso(new Date());if(P.days.indexOf(d)<0)P.days.push(d);sP()}
+
+/* ---------- Cards (Leitner boxes) ---------- */
+let C=store("az900cards",{});
+const sC=()=>put("az900cards",C);
+const todayS=()=>iso(new Date());
+const inDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
+const GAP=[0,0,1,2,4,8,16];
+BASE.forEach((c,i)=>{const id="g"+i;if(!C[id])C[id]={f:c[1],b:c[2],t:c[0],box:1,due:todayS(),w:0}});sC();
+function addMiss(qi){const q=QB[qi],id="q"+qi;const back=q[2][0]+". "+q[3];
+if(C[id]){C[id].box=1;C[id].due=todayS();C[id].w++}else C[id]={f:q[1],b:back,t:q[0],box:1,due:todayS(),w:1,m:1};sC()}
+
+/* ---------- Tabs ---------- */
+const PANES=["plan","quiz","cards","ready","buddy"];
+function show(n){PANES.forEach(p=>{$("#p-"+p).hidden=p!==n;$("#t-"+p).setAttribute("aria-selected",p===n)});
+if(n==="quiz")quizHome();if(n==="cards")cardsHome();if(n==="ready")readyView();if(n==="buddy")buddyView();
+try{history.replaceState(null,"","#"+n)}catch(e){}}
+PANES.forEach(p=>{$("#t-"+p).onclick=()=>show(p)});
+
+/* ---------- Confetti (skipped when reduced motion is on) ---------- */
+function confetti(){if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
+const c=document.createElement("canvas");c.style.cssText="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9";c.width=innerWidth;c.height=innerHeight;document.body.appendChild(c);
+const g=c.getContext("2d"),cols=["#0B6E66","#E8A317","#B4551E","#4A3FA8","#4CC3B6"];
+const ps=Array.from({length:90},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height*.4,v:2+Math.random()*4,s:5+Math.random()*6,k:cols[Math.floor(Math.random()*cols.length)],r:Math.random()*6}));
+let f=0;(function tick(){g.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.y+=p.v;p.x+=Math.sin((p.y+p.r)/30)*1.5;g.fillStyle=p.k;g.fillRect(p.x,p.y,p.s,p.s*.6)});if(++f<110)requestAnimationFrame(tick);else c.remove()})()}
+
+/* ---------- Quiz ---------- */
+let Q=null;
+function quizHome(){Q=null;
+const opts=['<option value="mix">Mixed round (8 questions)</option>','<option value="weak">My weakest topics</option>'].concat(TOPICS.map(t=>'<option value="'+t.id+'">'+esc(t.n)+" (5 questions)</option>")).join("");
+$("#quiz").innerHTML='<div class="panel"><h2>Practice quiz</h2><p class="muted">Original practice questions based on the public AZ-900 skills outline. Every answer comes with an explanation, and anything you miss goes into your flashcards.</p><label for="qsel">Choose a topic</label><select id="qsel">'+opts+'</select><button class="btn" id="qgo" type="button" style="margin-top:16px">Start quiz</button></div>';
+$("#qgo").onclick=()=>startQuiz($("#qsel").value)}
+function startQuiz(v){let pool=QB.map((q,i)=>({i,q}));
+if(v==="weak"){const w=TOPICS.slice().sort((a,b)=>score(a.id)-score(b.id)).slice(0,3).map(t=>t.id);pool=pool.filter(x=>w.indexOf(x.q[0])>=0);pool=shuffle(pool).slice(0,8)}
+else if(v==="mix")pool=shuffle(pool).slice(0,8);
+else pool=shuffle(pool.filter(x=>x.q[0]===+v));
+Q={list:pool,i:0,ok:0,done:false};qRender()}
+function qRender(){const x=Q.list[Q.i],q=x.q;
+const order=shuffle([0,1,2,3]);Q.order=order;Q.answered=false;
+$("#quiz").innerHTML='<div class="panel"><div class="muted">Question '+(Q.i+1)+" of "+Q.list.length+" · "+esc(TN(q[0]))+'</div><div class="bar" aria-hidden="true"><i style="width:'+(100*Q.i/Q.list.length)+'%"></i></div><h2 style="font-size:1.2rem;margin:12px 0" id="qq">'+esc(q[1])+'</h2><div role="group" aria-labelledby="qq">'+
+order.map((o,k)=>'<button type="button" class="opt" data-k="'+k+'"><b>'+"ABCD"[k]+".</b> "+esc(q[2][o])+"</button>").join("")+'</div><div id="fb" aria-live="polite"></div></div>';
+$$(".opt").forEach(b=>b.onclick=()=>answer(+b.dataset.k))}
+function answer(k){if(Q.answered)return;Q.answered=true;const x=Q.list[Q.i],q=x.q,ok=Q.order[k]===0;
+mark(q[0],ok);if(ok)Q.ok++;else addMiss(x.i);
+$$(".opt").forEach((b,j)=>{b.disabled=true;if(Q.order[j]===0)b.classList.add("ok");else if(j===k)b.classList.add("bad")});
+const last=Q.i===Q.list.length-1;
+$("#fb").innerHTML='<div class="msg"><b>'+(ok?"Correct.":"Not quite.")+"</b> "+(ok?"":"The answer is "+esc(q[2][0])+". ")+esc(q[3])+'</div><div class="row" style="margin-top:12px"><button class="btn" id="nx" type="button">'+(last?"See results":"Next question")+'</button><button class="btn sec" id="ex" type="button">Explain simply</button></div>';
+$("#nx").focus();$("#nx").onclick=()=>{if(last)qEnd();else{Q.i++;qRender()}};$("#ex").onclick=()=>{buddyTopic=q[0];show("buddy")}}
+function qEnd(){const pct=Math.round(100*Q.ok/Q.list.length);
+$("#quiz").innerHTML='<div class="panel"><h2>'+Q.ok+" out of "+Q.list.length+" ("+pct+'%)</h2><p>'+(pct>=80?"Strong round. Keep mixing topics so it sticks.":pct>=50?"Good progress. The questions you missed are now in your flashcards.":"This is exactly what practice is for. Review your flashcards, then try this topic again.")+'</p><div class="row"><button class="btn" id="a1" type="button">Another quiz</button><button class="btn sec" id="a2" type="button">Review flashcards</button><button class="btn sec" id="a3" type="button">See my readiness</button></div></div>';
+$("#a1").onclick=quizHome;$("#a2").onclick=()=>show("cards");$("#a3").onclick=()=>show("ready");if(pct>=80)confetti()}
+
+/* ---------- Flashcards ---------- */
+let FS=null;
+function cardStats(){const ids=Object.keys(C),t=todayS();return{due:ids.filter(i=>C[i].due<=t).length,all:ids.length,mast:ids.filter(i=>C[i].box>=4).length,miss:ids.filter(i=>C[i].m).length}}
+function cardsHome(){FS=null;const s=cardStats();
+const opts='<option value="0">All topics</option>'+TOPICS.map(t=>'<option value="'+t.id+'">'+esc(t.n)+"</option>").join("");
+$("#cards").innerHTML='<div class="panel"><h2>Flashcard coach</h2><p class="muted">Cards you get wrong come back sooner. Cards you know move to longer gaps (1, 2, 4, 8, then 16 days). Questions you miss in the quiz are added automatically.</p><div class="stats"><div class="stat"><b>'+s.due+'</b>due now</div><div class="stat"><b>'+s.all+'</b>total cards</div><div class="stat"><b>'+s.mast+'</b>well known</div><div class="stat"><b>'+s.miss+'</b>from missed questions</div></div><label for="fsel">Topic</label><select id="fsel">'+opts+'</select><button class="btn" id="fgo" type="button" style="margin-top:16px">Study due cards</button></div>';
+$("#fgo").onclick=()=>{const tp=+$("#fsel").value,t=todayS();
+const q=Object.keys(C).filter(i=>C[i].due<=t&&(!tp||C[i].t===tp)).sort((a,b)=>C[b].w-C[a].w||C[a].box-C[b].box);
+if(!q.length){$("#fgo").insertAdjacentHTML("afterend",'<div class="msg">Nothing due for this topic. Take a quiz or come back tomorrow.</div>');return}
+FS={q:q,n:q.length,seen:0,shown:false};fRender()}}
+function fRender(){if(!FS.q.length){const s=cardStats();$("#cards").innerHTML='<div class="panel"><h2>All caught up</h2><p>You reviewed '+FS.n+' card'+(FS.n==1?"":"s")+'. '+s.mast+' of '+s.all+' are well known.</p><button class="btn" id="fb1" type="button">Back to flashcards</button></div>';$("#fb1").onclick=cardsHome;confetti();return}
+const c=C[FS.q[0]];
+$("#cards").innerHTML='<div class="panel"><div class="muted">Card '+(FS.seen+1)+" of about "+FS.n+" · "+esc(TN(c.t))+'</div><div class="bar" aria-hidden="true"><i style="width:'+(100*FS.seen/FS.n)+'%"></i></div><div class="fc" id="fc" role="button" tabindex="0" aria-live="polite">'+esc(FS.shown?c.b:c.f)+'</div><div class="row" id="fr" style="margin-top:14px;justify-content:center">'+(FS.shown?'<button class="btn sec" id="ag" type="button">Again</button><button class="btn" id="gt" type="button">Got it</button>':'<button class="btn" id="sh" type="button">Show answer</button>')+"</div></div>";
+const flip=()=>{FS.shown=true;fRender();const g=$("#gt");if(g)g.focus()};
+if(!FS.shown){$("#sh").onclick=flip;$("#fc").onclick=flip;$("#fc").onkeydown=e=>{if(e.key===" "||e.key==="Enter"){e.preventDefault();flip()}};$("#sh").focus()}
+else{const id=FS.q[0];
+$("#gt").onclick=()=>{c.box=Math.min(6,c.box+1);c.due=inDays(GAP[c.box]);FS.q.shift();FS.seen++;FS.shown=false;sC();fRender()};
+$("#ag").onclick=()=>{c.box=1;c.w++;c.due=todayS();FS.q.shift();FS.q.push(id);FS.shown=false;sC();fRender()}}}
+
+/* ---------- Readiness ---------- */
+function readyView(){const r=readiness(),n=total(),st=streak();
+const label=n<10?"Answer at least 10 questions for a meaningful estimate":r<40?"Just getting started":r<60?"Building up":r<75?"Almost there":"Looks ready. Keep practising mixed rounds";
+const arc=157.08*r/100;
+const rows=TOPICS.map(t=>{const s=ts(t.id),p=Math.round(100*score(t.id));return'<div class="trow2"><div><b>'+esc(t.n)+'</b><div class="tbar" role="img" aria-label="'+p+' percent"><i style="width:'+p+'%"></i></div><small class="muted">'+(s.a?s.c+" of "+s.a+" correct":"Not practised yet")+'</small></div><button class="btn sec" data-pt="'+t.id+'" type="button">Practise</button></div>'}).join("");
+const weak=TOPICS.slice().sort((a,b)=>score(a.id)-score(b.id)).slice(0,3).map(t=>t.n);
+$("#ready").innerHTML='<div class="panel"><h2>Your readiness</h2><div class="gauge"><svg viewBox="0 0 120 70" role="img" aria-label="Readiness '+r+' percent"><path d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="var(--line)" stroke-width="12" stroke-linecap="round"/><path d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="var(--brand)" stroke-width="12" stroke-linecap="round" stroke-dasharray="'+arc+' 157.08"/><text x="60" y="56" text-anchor="middle" font-size="24" font-weight="800" fill="var(--ink)">'+r+'%</text></svg><div><b>'+label+'</b><p class="muted" style="margin:6px 0 0">Weighted by the AZ-900 domain percentages. This is an estimate from your practice, not an official prediction.</p></div></div>'+
+'<div class="stats" style="margin-top:14px"><div class="stat"><b>'+n+'</b>questions answered</div><div class="stat"><b>'+st+'</b>day streak</div><div class="stat"><b>'+cardStats().due+'</b>flashcards due</div></div>'+
+(n?'<p><b>Focus next:</b> '+weak.map(esc).join(", ")+'.</p>':"")+
+'<div class="row"><button class="btn" id="rp" type="button">Update my study plan from these scores</button></div></div><div class="panel" style="margin-top:14px"><h2>By topic</h2>'+rows+"</div>";
+$$("[data-pt]").forEach(b=>b.onclick=()=>{show("quiz");startQuiz(b.dataset.pt)});
+$("#rp").onclick=()=>{applyConf();show("plan");build()};
+if(r>=75&&n>=10&&!sessionStorage.getItem("cf")){try{sessionStorage.setItem("cf","1")}catch(e){}confetti()}}
+function applyConf(){TOPICS.forEach(t=>{const s=ts(t.id);if(s.a<2)return;const a=s.c/s.a,v=a>=.9?5:a>=.75?4:a>=.55?3:a>=.35?2:1;const el=document.querySelector('[data-t="'+t.id+'"]');if(el)el.value=v})}
+$("#useq").onclick=()=>{if(!total()){$("#err").textContent="Take a quiz first, then your plan can use your results.";$("#err").hidden=false;return}applyConf();build()};
+
+/* ---------- AI Study Buddy ---------- */
+let buddyTopic=1;
+function buddyView(){
+$("#buddy").innerHTML='<div class="panel"><h2>AI Study Buddy</h2><p class="muted">Pick a topic and a language to get a simple explanation with an everyday African example. Ask your own question and the AI buddy answers in simple words.</p>'+
+'<label for="bt">Topic</label><select id="bt">'+TOPICS.map(t=>'<option value="'+t.id+'"'+(t.id===buddyTopic?" selected":"")+">"+esc(t.n)+"</option>").join("")+'</select>'+
+'<label for="bl">Language</label><select id="bl">'+LANGS.map(l=>'<option value="'+l[0]+'">'+l[1]+"</option>").join("")+'</select>'+
+'<label for="bq">Your question (optional)</label><textarea id="bq" rows="3" maxlength="400" placeholder="For example: why do I need availability zones if I already have a region pair?"></textarea>'+
+'<div class="row" style="margin-top:16px"><button class="btn" id="bs" type="button">Explain simply</button><button class="btn sec" id="ba" type="button">Ask the AI buddy</button><button class="btn sec" id="bz" type="button">Quiz me on this topic</button></div></div><div id="bo" aria-live="polite"></div>';
+$("#bt").onchange=()=>{buddyTopic=+$("#bt").value};
+$("#bs").onclick=()=>explain(false);$("#ba").onclick=()=>explain(true);$("#bz").onclick=()=>{show("quiz");startQuiz($("#bt").value)}}
+function explain(ai){const id=+$("#bt").value,lang=$("#bl").value,q=$("#bq").value.trim();
+const t=TOPICS.find(x=>x.id===id),e=EX[id],txt=e[lang]||e.en,note=e[lang]?"":'<p class="muted">Local-language answers for this language need the AI buddy. Showing English.</p>';
+let h='<div class="panel" style="margin-top:14px"><h3>'+esc(t.n)+'</h3><p>'+esc(txt)+"</p>"+note+'<p class="muted"><b>Remember:</b> '+esc(t.k)+'.</p></div>';
+if(ai)h+='<div class="panel" style="margin-top:14px" id="aib"><h3>AI buddy</h3><p id="aiq" class="muted">Thinking…</p></div>';
+$("#bo").innerHTML=h;if(!ai)return;
+const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),25000);
+fetch("/api/buddy",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({topic:t.n,question:q,lang:lang}),signal:ctl.signal})
+.then(r=>r.ok?r.json():Promise.reject(r.status)).then(d=>{clearTimeout(tm);const p=$("#aiq");p.className="";p.style.whiteSpace="pre-wrap";p.textContent=d.text||"No answer came back. Try again."})
+.catch(()=>{clearTimeout(tm);const p=$("#aiq");p.textContent="The AI buddy is not connected in this copy of the app. It needs the /api/buddy function deployed with an API key. The built-in explanation above still works."})}
+
+/* ---------- Demo data and reset ---------- */
+$("#demo").onclick=()=>{const acc=[.9,.75,.6,.5,.4,.7,.35,.8,.6,.55,.9];P={t:{},days:[]};TOPICS.forEach((t,i)=>{const a=6+(i%4);P.t[t.id]={a:a,c:Math.round(a*acc[i])}});
+for(let i=0;i<4;i++)P.days.push(inDays(-i));sP();
+[0,4,6,16].forEach(i=>{C["g"+i].w=2;C["g"+i].m=0});sC();
+const d=new Date();d.setDate(d.getDate()+21);$("#date").value=iso(d);applyConf();build();show("ready")};
+$("#reset").onclick=()=>{if(!confirm("Clear your quiz scores, flashcards and plan on this device?"))return;try{["az900prog","az900cards","az900plan"].forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()};
+
+const h=(location.hash||"").slice(1);show(PANES.indexOf(h)>=0?h:"plan");
+})();
 </script>
 </body>
 </html>

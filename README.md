@@ -160,10 +160,10 @@ Open `index.html` in a browser. Plan, Quiz, Flashcards, Readiness and the built-
 ---
 
 ## 👥 Team
-SUSAN ONYANGO
-FIONNA SIBORA
-FRANCIS TAIWO
-HARITH PARVEZ
+- SUSAN ONYANGO
+- FIONNA SIBORA
+- FRANCIS TAIWO
+- HARITH PARVEZ
 
 ## 📄 Licence
 

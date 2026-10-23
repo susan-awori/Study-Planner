@@ -4,7 +4,7 @@
 
 Built for the **Vibe Coding Hackathon for #1Million Devs 2026 (AZ-900 Exam Prep Edition)**.
 
-**Live demo:** _add your Vercel link here_  ·  **Demo video:** _add link here_  ·  **Pitch deck:** _https://canva.link/l95dezikeygmzzh_
+**Live demo:** _(https://study-planner-nine-opal.vercel.app/#plan)_  ·  **Demo video:** _https://youtu.be/ZeLrBUbTBHY_  ·  **Pitch deck:** _https://canva.link/l95dezikeygmzzh_
 
 > **Tip for reviewers:** open the demo and click **Load demo data** in the header. It fills in a full study plan, quiz history, flashcards and readiness dashboard in one click.
 
